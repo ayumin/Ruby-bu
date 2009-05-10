@@ -1,0 +1,488 @@
+Ruby部　各位 
+
+おつかれさまです、相澤です。 
+RSpecによるTDD(テスト駆動開発)の実演Step by Stepの最終回です。
+質問や突込みなどはこのメールに返信してください。 
+
+STEP.13 スペックファイルのリファクタリング
+
+前回までの作業で、ストライクを一回含む場合の点数計算をすることができるように
+なりました。ここで少し視点を変えて、スペックファイルの内容をみてみましょう。
+
+bowling_spec.rb
+----
+require (File.dirname(__FILE__) + '/spec_helper') 
+require 'game' 
+describe Game do 
+  describe "when all roll was gutter" do 
+    before do 
+      @game = Game.new 
+      20.times do     # 全部ガターの場合は20回投球することになる
+        @game.roll(0) # rollは倒したピンの数を引数にとる
+      end
+    end 
+    it "score should be 0." do 
+      @game.score.should == 0 # スコアは0点であること 
+    end 
+  end
+  describe "when all roll was 1 pin," do 
+    before do 
+      @game = Game.new 
+      20.times do     # 全部１本倒した場合は20回投球することになる
+        @game.roll(1)
+      end
+    end 
+    it "score should be 20." do 
+      @game.score.should == 20 # スコアは20点であること 
+    end 
+  end 
+  describe "when strike," do 
+    before do 
+      @game = Game.new 
+      @game.roll(10) # 第１フレーム：ストライク
+      @game.roll(3)  # 第２フレーム第１投：３点
+      @game.roll(5)  # 第２フレーム第２投：５点
+      # => ここで第１、２フレームまでの得点がきまる
+      # => 第１フレームは 10 + 3 + 5 = 18
+      # => 第２フレームは 18 + 3 + 5 = 26
+      @game.roll(7)  # 第３フレーム第１投：７点
+      @game.roll(0)  # 第３フレーム第２投：ガター
+      # => 第３フレームは 26 + 7 + 0 = 33
+      14.times do
+        @game.roll(0) # 第４フレーム以降は全てガター
+      end
+    end 
+    it "score should be 33." do 
+      @game.score.should == 33 # スコアは33点であること 
+    end 
+  end 
+end 
+
+前回の最後に、game.rbのリファクタリングをおこないましたが、こちらのスペック
+ファイルもだんだん重複が多くなってきてしまいました。スペックファイルは仕様を
+記述するので必要以上に重複を省いたり、仕様の本質が見えなくなるようなリファク
+タリングはすべきではありません。
+
+逆に言うと仕様記述の本質でない部分は積極的に重複を省いてリファクタリングする
+ことで、スペックコードそのものの保守性が向上します。
+
+全てのdescribeメソッドのbeforeの中で
+
+      @game = Game.new 
+
+というGameクラスのインスタンスを生成する記述がありますが、これはこの仕様記述の
+本質ではありません。そこでこれを全体の共通定義としてしまいましょう。
+
+bowling_spec.rb
+----
+require (File.dirname(__FILE__) + '/spec_helper') 
+require 'game' 
+describe Game do 
+  before do
+    @game = Game.new
+  end
+  describe "when all roll was gutter" do 
+    before do 
+      20.times do     # 全部ガターの場合は20回投球することになる
+        @game.roll(0) # rollは倒したピンの数を引数にとる
+      end
+    end 
+    it "score should be 0." do 
+      @game.score.should == 0 # スコアは0点であること 
+    end 
+  end
+  describe "when all roll was 1 pin," do 
+    before do 
+      20.times do     # 全部１本倒した場合は20回投球することになる
+        @game.roll(1)
+      end
+    end 
+    it "score should be 20." do 
+      @game.score.should == 20 # スコアは20点であること 
+    end 
+  end 
+  describe "when strike," do 
+    before do 
+      @game.roll(10) # 第１フレーム：ストライク
+      @game.roll(3)  # 第２フレーム第１投：３点
+      @game.roll(5)  # 第２フレーム第２投：５点
+      # => ここで第１、２フレームまでの得点がきまる
+      # => 第１フレームは 10 + 3 + 5 = 18
+      # => 第２フレームは 18 + 3 + 5 = 26
+      @game.roll(7)  # 第３フレーム第１投：７点
+      @game.roll(0)  # 第３フレーム第２投：ガター
+      # => 第３フレームは 26 + 7 + 0 = 33
+      14.times do
+        @game.roll(0) # 第４フレーム以降は全てガター
+      end
+    end 
+    it "score should be 33." do 
+      @game.score.should == 33 # スコアは33点であること 
+    end 
+  end 
+end 
+
+この変更によってスペックファイルが壊れてしまっていないかどうか確認するために
+もちろんテストします。
+
+>spec spec\bowling_spec.rb
+...
+
+Finished in 0.078 seconds
+
+3 examples, 0 failures
+
+さらにガターやストライクを表すメソッドを用意しておくと見通しが良くなりそうです。
+
+bowling_spec.rb
+----
+require (File.dirname(__FILE__) + '/spec_helper') 
+require 'game' 
+describe Game do 
+  before do
+    @game = Game.new
+  end
+  describe "when all roll was gutter" do 
+    before do 
+      20.times do     # 全部ガターの場合は20回投球することになる
+        gutter # rollは倒したピンの数を引数にとる
+      end
+    end 
+    it "score should be 0." do 
+      @game.score.should == 0 # スコアは0点であること 
+    end 
+  end
+  describe "when all roll was 1 pin," do 
+    before do 
+      20.times do     # 全部１本倒した場合は20回投球することになる
+        @game.roll(1)
+      end
+    end 
+    it "score should be 20." do 
+      @game.score.should == 20 # スコアは20点であること 
+    end 
+  end 
+  describe "when rolls contain a strike," do 
+    before do 
+      strike # 第１フレーム：ストライク
+      @game.roll(3)  # 第２フレーム第１投：３点
+      @game.roll(5)  # 第２フレーム第２投：５点
+      # => ここで第１、２フレームまでの得点がきまる
+      # => 第１フレームは 10 + 3 + 5 = 18
+      # => 第２フレームは 18 + 3 + 5 = 26
+      @game.roll(7)  # 第３フレーム第１投：７点
+      gutter  # 第３フレーム第２投：ガター
+      # => 第３フレームは 26 + 7 + 0 = 33
+      14.times do
+        gutter # 第４フレーム以降は全てガター
+      end
+    end 
+    it "score should be 33." do 
+      @game.score.should == 33 # スコアは33点であること 
+    end 
+  end
+  def gutter
+    @game.roll(0)
+  end
+  def strike
+    @game.roll(10)
+  end
+end
+
+
+STEP.14 テスト駆動開発を進める
+
+さて、それでは気を取り直して新しい仕様を追加します。
+
+bowling_spec.rb
+----
+require (File.dirname(__FILE__) + '/spec_helper') 
+require 'game' 
+describe Game do 
+  before do
+    @game = Game.new
+  end
+  describe "when all roll was gutter" do 
+    before do 
+      20.times do     # 全部ガターの場合は20回投球することになる
+        gutter # rollは倒したピンの数を引数にとる
+      end
+    end 
+    it "score should be 0." do 
+      @game.score.should == 0 # スコアは0点であること 
+    end 
+  end
+  describe "when all roll was 1 pin," do 
+    before do 
+      20.times do     # 全部１本倒した場合は20回投球することになる
+        @game.roll(1)
+      end
+    end 
+    it "score should be 20." do 
+      @game.score.should == 20 # スコアは20点であること 
+    end 
+  end 
+  describe "when rolls contain a strike," do 
+    before do 
+      strike # 第１フレーム：ストライク
+      @game.roll(3)  # 第２フレーム第１投：３点
+      @game.roll(5)  # 第２フレーム第２投：５点
+      # => ここで第１、２フレームまでの得点がきまる
+      # => 第１フレームは 10 + 3 + 5 = 18
+      # => 第２フレームは 18 + 3 + 5 = 26
+      @game.roll(7)  # 第３フレーム第１投：７点
+      gutter  # 第３フレーム第２投：ガター
+      # => 第３フレームは 26 + 7 + 0 = 33
+      14.times do
+        gutter # 第４フレーム以降は全てガター
+      end
+    end 
+    it "score should be 33." do 
+      @game.score.should == 33 # スコアは33点であること 
+    end 
+  end
+  describe "when all roll was strike," do
+    before do      # パーフェクトゲームの場合
+      12.times do
+        strike
+      end
+    end
+    it "score should be 300" do
+      @game.score.should == 300 # スコアは300点であること 
+    end
+  end
+  def gutter
+    @game.roll(0)
+  end
+  def strike
+    @game.roll(10)
+  end
+end
+
+テストを失敗させた後、game.rbを修正します。全てのテストケースをパスする最小限の
+実装なら何でも良いのですが、ここでは下記のように実装してみました。
+
+game.rb
+----
+class Game
+  def initialize
+    @score = []
+  end
+  def roll pins
+    @score << pins
+  end
+  def score 
+    score = 0      # ここまでのフレームの得点
+    roll_index = 0 # 基点となる投球
+    10.times do    # 10フレーム分繰り返す
+      if @score[roll_index] == 10 # ストライクの場合
+        score += @score[roll_index] + @score[roll_index + 1]
+                                    + @score[roll_index + 2]
+        roll_index += 1
+      else
+        score += @score[roll_index] + @score[roll_index + 1]
+        roll_index += 2
+      end
+    end
+    score
+  end 
+end 
+
+このコードでテストにパスしました。そして仕様を追加します。次はスペアを含むケースです。
+
+bowling_spec.rb
+----
+require (File.dirname(__FILE__) + '/spec_helper') 
+require 'game' 
+describe Game do 
+  before do
+    @game = Game.new
+  end
+  describe "when all roll was gutter" do 
+    before do 
+      20.times do     # 全部ガターの場合は20回投球することになる
+        gutter # rollは倒したピンの数を引数にとる
+      end
+    end 
+    it "score should be 0." do 
+      @game.score.should == 0 # スコアは0点であること 
+    end 
+  end
+  describe "when all roll was 1 pin," do 
+    before do 
+      20.times do     # 全部１本倒した場合は20回投球することになる
+        @game.roll(1)
+      end
+    end 
+    it "score should be 20." do 
+      @game.score.should == 20 # スコアは20点であること 
+    end 
+  end 
+  describe "when rolls contain a strike," do 
+    before do 
+      strike # 第１フレーム：ストライク
+      @game.roll(3)  # 第２フレーム第１投：３点
+      @game.roll(5)  # 第２フレーム第２投：５点
+      # => ここで第１、２フレームまでの得点がきまる
+      # => 第１フレームは 10 + 3 + 5 = 18
+      # => 第２フレームは 18 + 3 + 5 = 26
+      @game.roll(7)  # 第３フレーム第１投：７点
+      gutter  # 第３フレーム第２投：ガター
+      # => 第３フレームは 26 + 7 + 0 = 33
+      14.times do
+        gutter # 第４フレーム以降は全てガター
+      end
+    end 
+    it "score should be 33." do 
+      @game.score.should == 33 # スコアは33点であること 
+    end 
+  end
+  describe "when all roll was strike," do
+    before do      # パーフェクトゲームの場合
+      12.times do
+        strike
+      end
+    end
+    it "score should be 300" do
+      @game.score.should == 300 # スコアは300点であること 
+    end
+  end
+  describe "when rolls contain spair," do
+    before do
+      @game.roll(7); @game.roll(3) # 第1フレームはスペア
+      @game.roll(5); @game.roll(2) # 第2フレームはスペアではない
+      # => 第１フレームは  7 + 3 + 5 = 15
+      # => 第２フレームは 15 + 5 + 2 = 22
+      16.times do
+        gutter # 第３フレーム以降は全てガター
+      end
+    end
+    it "score should be 22" do
+      @game.score.should == 22 # スコアは22点であること 
+    end
+  end
+  def gutter
+    @game.roll(0)
+  end
+  def strike
+    @game.roll(10)
+  end
+end 
+
+テストを失敗させた後、game.rbを修正します。
+
+game.rb
+----
+class Game
+  def initialize
+    @score = []
+  end
+  def roll pins
+    @score << pins
+  end
+  def score 
+    score = 0      # ここまでのフレームの得点
+    roll_index = 0 # 基点となる投球
+    10.times do    # 10フレーム分繰り返す
+      if @score[roll_index] == 10 # ストライクの場合
+        score += @score[roll_index] + @score[roll_index + 1] + @score[roll_index + 2]
+        roll_index += 1
+      elsif @score[roll_index] + @score[roll_index + 1] == 10 # スペアの場合
+        score += @score[roll_index] + @score[roll_index + 1] + @score[roll_index + 2]
+        roll_index += 2
+      else
+        score += @score[roll_index] + @score[roll_index + 1]
+        roll_index += 2
+      end
+    end
+    score
+  end 
+end 
+
+そしてリファクタリングします。
+
+game.rb
+----
+class Game
+  FRAME_NUMBER = 10
+  def initialize
+    @score = []
+    @roll_index = 0
+  end
+  def roll pins
+    @score << pins
+  end
+  def score 
+    score = 0 # ここまでのフレームの得点
+    FRAME_NUMBER.times do
+      score += @score[@roll_index] + @score[@roll_index + 1] 
+      score += bonus if strike or spair # ストライクかスペアならボーナス
+      @roll_index += strike ? 1 : 2     # ストライクなら１投それ以外なら２投分基準を進める
+    end
+    score
+  end
+  private
+  def strike
+    @score[@roll_index] == 10
+  end
+  def spair
+    @score[@roll_index] + @score[@roll_index + 1] == 10 
+  end
+  def bonus
+    @score[@roll_index + 2]
+  end
+end 
+
+テンポよく
+　RED(仕様を記述してテストを失敗させる)
+　　→GREEN（仕様を満たす最小限のコードを実装する）
+　　　　→REFACTOR（コードが動作する状態を保ったまま重複を除く）
+を行うことができましたか？
+
+STEP.15 受入れテスト
+
+最後に受け入れテストを行ってこのコードを顧客（誰？）に納品できる状態にしましょう。
+受け入れテストを記述します。
+
+UAT_spec.rb
+----
+require (File.dirname(__FILE__) + '/spec_helper') 
+require 'game' 
+describe Game do 
+  before do
+    @game = Game.new
+  end
+  describe "the UAT case" do
+    before do
+      [1,4,4,5,6,4,5,5,10,0,1,7,3,6,4,10,2,8,6].each do |pins|
+        @game.roll(pins)
+      end
+    end
+    it "score should be 133." do
+      @game.score.should == 133
+    end
+  end
+end 
+
+テストを実行してみましょう。
+
+>spec -fs spec\UAT_spec.rb
+
+Game the UAT case
+- score should be 133.
+
+Finished in 0.0 seconds
+
+1 example, 0 failures
+
+無事受け入れテストにもパスできたようです。
+
+
+
+
+これで４回に分けて連載したRSpecによるTDD(テスト駆動開発)の実演Step by Stepは終了です。
+
+実際の業務で記述する仕様やコードは今回のように簡単なものばかりではないですが、TDDによる
+開発の進め方は基本的に同じです。そしてTDDをテンポよく進めることができるようになるためには
+「習熟」が必要です。スポーツ選手が基本的な動作や走り込みを繰り返して基礎練習を怠らないよう
+に、簡単なコードを何度も記述して練習を積んでいってください。

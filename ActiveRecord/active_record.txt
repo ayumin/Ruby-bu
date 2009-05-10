@@ -1,0 +1,109 @@
+Active Recordとは
+
+「データベースのテーブルやビューの列をラップし、データベースアクセスをカプセル化し、ドメインロジックを追加するオブジェクト」
+
+Active Recordとは、ビジネスオブジェクトとデータベーステーブルとを接続し、ロジックとデータをひとまとまりとして表現する永続的名ドメインモデル（振舞いとデータをカプセル化したドメインのオブジェクトモデル）を生成する。これは、Martin Fowlerによって記述された同名のO/Rマッピングパターンの実装である。
+
+インストール
+gem install rails
+railsの他のgemと同時にインストールされます。
+
+最も基本的なActiveRecord
+
+person.rb
+----
+require 'rubygems'
+require 'active_record'
+class Person < ActiveRecord::Base
+end
+このたった4行（実質は1行）のコードによって、クラスとテーブルの関連付けが自動的におこなわれます。
+ActiveRecordではクラス名の複数形の名前を持つテーブルとの関連付けがつくられるため、このPersonクラスはpeopleテーブルと関連付けがおこなわれることになります。
+
+class User < ActiveRecord::Base; end
+
+はusersテーブルと関連付けられ、
+
+class Child < ActiveRecord::Base; end
+
+はchildrenテーブルと関連付けされます。
+
+例えばpeopleテーブルにnameやageというカラムがある場合、とくに何も記述しなくてもPerson#nameやPerson#ageというアクセサメソッドが存在することになります。（すごい！！）例えば、下記のようなことができます。
+
+main.rb
+----
+require 'person'
+
+p = Person.new         # 新しいレコードをつくる
+p.name = 'Aoyama Taro' # あたらしいレコードに名前を設定
+p.age = 32             # 年齢を設定
+p.save                 # あたらしいレコードをテーブルに永続化する
+
+teenagers = Person.find(:all, :conditions=>[ "age<?", '20']) # 20才未満のひとを検索する
+teenagers.each do |teen|
+  p teen.name
+end
+yamamoto = Person.find_by_name 'Yamamoto Hanako' # 山本さんを名前で検索する
+
+他にもActiveRecord::Baseには動的に生成される驚くべきメソッドがたくさんあります。
+詳しくはリファレンスを参照してください。
+http://api.rubyonrails.org/classes/ActiveRecord/Base.html
+
+今回使用するDBMSは扱いが簡単なSQLite3とします。SQLite3はDropboxから取得してください。
+\My Dropbox\Ruby-bu\Tools
+sqlite-3_6_4.zip
+
+展開したzipの中にあるsqlite3.dllとsqlite3.exeをC:\WINDOWSにコピーします。
+またrubyでsqlite3を使用するためにアダプタをインストールする必要があります。
+
+> gem install sqlite3-ruby --version '=1.2.3'
+Successfully installed sqlite3-ruby-1.2.3-x86-mswin32
+1 gem installed
+Installing ri documentation for sqlite3-ruby-1.2.3-x86-mswin32...
+Installing RDoc documentation for sqlite3-ruby-1.2.3-x86-mswin32...
+
+
+ここでは、下記のような構造を持つテーブルをActiveRecordで操作してみます。
+
+people.sql
+----
+create table people (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, -- 主キー/自動インクリメント型
+  name TEXT,
+  celphone TEXT,
+  age INTEGER);
+
+またあらかじめ以下のデータを用意しておきます。
+
+people_data.sql
+----
+insert into people (name,celphone,age) values ('Fukuda Jun',      '090-5082-5629', 25 );
+insert into people (name,celphone,age) values ('Kuriyama Itsuki', '080-4851-0409', 30 );
+insert into people (name,celphone,age) values ('Uno Kouichi',     '080-0772-6329', 37 );
+insert into people (name,celphone,age) values ('Koizumi Chisato', '090-6812-2141', 29 );
+insert into people (name,celphone,age) values ('Ohara Yuuna',     '090-3071-0231', 25 );
+insert into people (name,celphone,age) values ('Shindou Akitomo', '080-6907-6402', 53 );
+insert into people (name,celphone,age) values ('Mihara Chihiro',  '080-8719-6829', 44 );
+insert into people (name,celphone,age) values ('Ookubo Seitarou', '090-6185-4060', 55 );
+insert into people (name,celphone,age) values ('Nomura Kisaku',   '080-6612-0744', 48 );
+insert into people (name,celphone,age) values ('Akita Nanako',    '090-0309-5654', 40 );
+
+作業フォルダでsqlite3を起動し、テーブルとデータをつくります。
+
+>sqlite3 sample.db
+SQLite version 3.6.4
+Enter ".help" for instructions
+Enter SQL statements terminated with a ";"
+sqlite> .read people.sql
+sqlite> .read people_data.sql
+sqlite> select * from people;
+1|Fukuda Jun|090-5082-5629|25
+2|Kuriyama Itsuki|080-4851-0409|30
+3|Uno Kouichi|080-0772-6329|37
+4|Koizumi Chisato|090-6812-2141|29
+5|Ohara Yuuna|090-3071-0231|25
+6|Shindou Akitomo|080-6907-6402|53
+7|Mihara Chihiro|080-8719-6829|44
+8|Ookubo Seitarou|090-6185-4060|55
+9|Nomura Kisaku|080-6612-0744|48
+10|Akita Nanako|090-0309-5654|40
+sqlite> .exit

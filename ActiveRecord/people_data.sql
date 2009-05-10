@@ -1,0 +1,10 @@
+insert into people (name,celphone,age) values ('Fukuda Jun',      '090-5082-5629', 25 );
+insert into people (name,celphone,age) values ('Kuriyama Itsuki', '080-4851-0409', 30 );
+insert into people (name,celphone,age) values ('Uno Kouichi',     '080-0772-6329', 37 );
+insert into people (name,celphone,age) values ('Koizumi Chisato', '090-6812-2141', 29 );
+insert into people (name,celphone,age) values ('Ohara Yuuna',     '090-3071-0231', 25 );
+insert into people (name,celphone,age) values ('Shindou Akitomo', '080-6907-6402', 53 );
+insert into people (name,celphone,age) values ('Mihara Chihiro',  '080-8719-6829', 44 );
+insert into people (name,celphone,age) values ('Ookubo Seitarou', '090-6185-4060', 55 );
+insert into people (name,celphone,age) values ('Nomura Kisaku',   '080-6612-0744', 48 );
+insert into people (name,celphone,age) values ('Akita Nanako',    '090-0309-5654', 40 );

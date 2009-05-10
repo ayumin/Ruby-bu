@@ -1,0 +1,209 @@
+Ruby部　各位 
+
+おつかれさまです、相澤です。 
+
+前回のRuby勉強会でおこなった、RSpecによるTDD(テスト駆動開発)の実演をStep by Step 
+で解説します。今日は第1回です。 
+質問や突込みなどはこのメールに返信してください。 
+
+また、この資料はいずれWordかPPTにしたいんですが、誰か手伝ってくれる人を募集中します。 
+
+RSpecとは 
+
+RubyのDSL機能を活用してテスト対象の「振舞い」を記述することで単体テストをおこなうための 
+テストフレームワークです。詳しくは乙黒さんの資料をご覧ください。 
+
+STEP1. RSpecのインストール 
+
+> gem install rspec 
+
+まず、作業フォルダの中にspecとlibという2つのディレクトリを作成します。 
+
+> mkdir spec 
+> mkdir lib 
+
+specにはRSpecによって実行されるテストスクリプト(specファイル)を格納します。 
+libにはspecファイルによってテストされるテスト対象クラス(ターゲット)を格納します。 
+
+specフォルダには作法としてxxx_spec.rbという名前でspecファイルを作成していきます。 
+xxxの部分は任意の名前で構いませんが、テストケースやシナリオがわかる名前にすると良いでしょう。 
+今回はボーリングゲームのスコア計算をするGameクラスをターゲットとして、bowling_spec.rbを作成します。 
+
+STEP2. spec_helperを作成する 
+
+specファイルは今後増えていく可能性があるため、全てのspecファイルに共通する設定を記述するために 
+spec_helper.rbという名前のヘルパースクリプトをspecディレクトリ内に作成します。 
+
+spec_helper.rb 
+---- 
+require 'rubygems' 
+require 'spec' 
+$:.unshift(File.dirname(__FILE__) + '/../lib') 
+
+
+
+STEP3. specファイルを作成する 
+
+TDDでは*常に*テストから書きはじめます。 
+まずは今回テストしたい要求仕様を確認します。 
+https://www.getdropbox.com/browse2#/Ruby-bu/Activity 
+TCER_Surname_Surname.xls 
+
+一度に全てのテストを記述するのではなく、ひとつづつテストと実装を繰り返すのがTDDの流儀です。 
+実際の開発では「ひとつ」の粒度はそのチームが最も生産性を発揮できる単位に収束していきますが、 
+ここではターゲットが小さいのでテスト粒度も小さくしていきます。 
+
+まずはじめに#TC-001のテストをテストスクリプトとして記述します。 
+
+bowling_spec.rb 
+---- 
+require (File.dirname(__FILE__) + '/spec_helper') 
+require 'game' 
+describe Game do 
+  describe "when all roll was gutter" do 
+    before do 
+      @game = Game.new 
+      20.times do     # 全部ガターの場合は20回投球することになる
+        @game.roll(0) # rollは倒したピンの数を引数にとる
+      end
+    end 
+    it "score should be 0." do 
+      @game.score.should == 0 # スコアは0点であること 
+    end 
+  end 
+end 
+
+STEP4. とりあえずテスト！ 
+
+それではbowling_spec.rbを実行してみます。TDDではspecファイルであれ、ターゲットであれ、 
+なにか変更を加えたらすぐにテストを実行するのが決まりです。 
+
+specフォルダのひとつ上のフォルダ(作業フォルダ)からspecファイルを実行する場合、下記のように 
+コマンドを入力することで、specファイルを実行することができます。
+
+> spec spec\bowling_spec.rb 
+C:/Ruby/lib/ruby/site_ruby/1.8/rubygems/custom_require.rb:31:in `gem_original_re 
+quire': no such file to load -- game (LoadError) 
+
+STEP5. エラーの解決を試みる 
+
+上記のようにまだgame.rbがLOAD_PATHの中に存在しないため、no such file to load -- game (LoadError) 
+というエラーになります。 
+それではlibディレクトリにgame.rbを作ることでこのエラーを解決しましょう。 
+
+game.rb 
+---- 
+(中身は空) 
+
+> spec spec\bowling_spec.rb 
+./spec\bowling_spec.rb:3: uninitialized constant Game (NameError) 
+エラーの内容が変化しました。今度はgame.rbをロードすることはできたようですが、Gameというクラス 
+が見当たらないようです。それではgame.rbにGameクラスを記述することでこのエラーを解決しましょう。 
+
+game.rb 
+---- 
+class Game; end 
+
+> spec spec\bowling_spec.rb 
+F 
+
+1) 
+NoMethodError in 'Game score should be 0.' 
+undefined method `roll' for #<Game:0x2daa4ec> 
+./spec\bowling_spec.rb:6: 
+
+Finished in 0.015 seconds 
+
+1 example, 1 failure 
+エラーの内容が変化しました。今度はGameクラスはどうやら無事にインスタンス化できたようですが、 
+rollメソッドがみあたらないようです。それではGameクラスにrollメソッドを記述することでこのエラーを 
+解決しましょう。 
+
+game.rb 
+---- 
+class Game 
+  def roll pins 
+  end 
+end 
+
+> spec spec\bowling_spec.rb 
+F 
+
+1) 
+NoMethodError in 'Game when all roll was gutter score should be 0.' 
+undefined method `score' for #<Game:0x2da9970> 
+./spec\bowling_spec.rb:10: 
+
+Finished in 0.016 seconds 
+
+1 example, 1 failure 
+エラーの内容が変化しました。今度はscoreメソッドがみつからないようです。 
+それではGameクラスにscoreメソッドを記述することでこのエラーを解決しましょう。 
+
+game.rb 
+---- 
+class Game 
+  def roll pins 
+  end 
+  def score 
+  end 
+end 
+
+> spec spec\bowling_spec.rb 
+F 
+
+1) 
+'Game when all roll was gutter score should be 0.' FAILED 
+expected: 0, 
+     got: nil (using ==) 
+./spec\bowling_spec.rb:10: 
+
+Finished in 0.016 seconds 
+
+1 example, 1 failure 
+
+STEP6. テストを成功させる 
+
+またエラーの内容が変化しました。今度はscoreメソッドの戻り値が期待する結果と 
+異なるため、テストが失敗したようです。ようやくまともなテストっぽくなってきましたね。 
+ここでは0が戻ってくると期待した場面でnilが返ってきたようです。発生した場所は、 
+bowling_spec.rbの10行目のようですね。 
+
+bowling_spec.rb 
+---- 
+ 9:    it "score should be 0." do 
+10:      @game.score.should == 0 # スコアは0点であること 
+11:    end 
+
+なるほど、たしかに0が返ってくることをテストしている部分です。 
+それではgame.rbを修正してこのテストを成功させるようにしたいとおもいます。 
+このテストに成功するために最少の変更をgame.rbにおこないます。 
+
+game.rb 
+---- 
+class Game 
+  def roll pins 
+  end 
+  def score 
+    0 
+  end 
+end 
+
+> spec spec\bowling_spec.rb 
+. 
+
+Finished in 0.016 seconds 
+
+1 example, 0 failures 
+どうやらテストに成功したようです！これで#TC-001はクリアしました。 
+なにか腑に落ちない点もあるかもしれませんが。。。 
+
+（つづきは次回） 
+
+----
+Ayumu, Aizawa /systems analyst 
+Accenture Technology Solutions 
+web: accenturetechnologysolutions.co.jp 
+email: ayumu.aizawa@accenture.com 
+tel: +81-3-3588-3800 fax: +81-3-3588-3801 
+

@@ -1,0 +1,257 @@
+Ruby部　各位 
+
+おつかれさまです、相澤です。 
+RSpecによるTDD(テスト駆動開発)の実演Step by Stepのつづきです。
+質問や突込みなどはこのメールに返信してください。 
+
+STEP.9 仕様の確認
+
+前回までの作業で、ストライクやスペアを考慮しない場合の点数計算については
+実装できました。今回はストライクの場合の実装を考えていきます。
+TDDの原則にしたがってまずテストから書いていきたいところですが、その前に
+ボーリングでストライクをとったときの点数計算の方法を確認しておきましょう。
+
+ボウリング（Wikipedia）より引用
+http://ja.wikipedia.org/wiki/%E3%83%9C%E3%82%A6%E3%83%AA%E3%83%B3%E3%82%B0
+
+点数の計算法
+１．フレームにおいてスペア・ストライクがない場合（オープンフレームと呼ぶ）、
+　　2回の投球で倒したピンの本数がそのフレームの得点となる。 
+２．スペアを出した場合、倒した本数である10点に加え、次の1投球で倒したピンの
+　　本数がこのフレームの得点に加算される。 
+３．ストライクを出した場合、倒した本数である10点に加え、続く2投球で倒したピン
+　　の本数が加算される。つまり次の投球もストライクだった場合は、さらにその次の
+　　投球（2フレーム先の第1投球）で倒したピンの本数まで加算される。 
+４．第10フレームのみ、スペア・ストライクを出した場合、3投して倒したピンの総数を
+　　第10フレームの得点として計算する。 
+５．各フレームの得点の合計が1ゲームの得点となる。最高得点は300点となる。
+
+上記３より、第nフレームの第一番目の投球で10本のピンを倒した場合その後2回分の投球
+で倒したピンの数がボーナスとして第nフレームの得点に加算されるということになりますね。
+まずは最初のフレームがストライクで、続く2回の投球分が加算されるところまでを考えてみ
+ます。
+
+STEP.10 仕様をテストとして記述する
+
+spec\bowling_spec.rb
+----
+require (File.dirname(__FILE__) + '/spec_helper') 
+require 'game' 
+describe Game do 
+  describe "when all roll was gutter" do 
+    before do 
+      @game = Game.new 
+      20.times do     # 全部ガターの場合は20回投球することになる
+        @game.roll(0) # rollは倒したピンの数を引数にとる
+      end
+    end 
+    it "score should be 0." do 
+      @game.score.should == 0 # スコアは0点であること 
+    end 
+  end
+  describe "when all roll was 1 pin," do 
+    before do 
+      @game = Game.new 
+      20.times do     # 全部１本倒した場合は20回投球することになる
+        @game.roll(1)
+      end
+    end 
+    it "score should be 20." do 
+      @game.score.should == 20 # スコアは20点であること 
+    end 
+  end 
+  describe "when strike," do 
+    before do 
+      @game = Game.new 
+      @game.roll(10) # 第１フレーム：ストライク
+      @game.roll(3)  # 第２フレーム第１投：３点
+      @game.roll(5)  # 第２フレーム第２投：５点
+      # => ここで第１、２フレームまでの得点がきまる
+      # => 第１フレームは 10 + 3 + 5 = 18
+      # => 第２フレームは 18 + 3 + 5 = 26
+      @game.roll(7)  # 第３フレーム第１投：７点
+      @game.roll(0)  # 第３フレーム第２投：ガター
+      # => 第３フレームは 26 + 7 + 0 = 33
+      14.times do
+        @game.roll(0) # 第４フレーム以降は全てガター
+      end
+    end 
+    it "score should be 33." do 
+      @game.score.should == 33 # スコアは33点であること 
+    end 
+  end 
+end 
+
+さっそくテストしてみましょう。
+
+>spec spec\bowling_spec.rb
+..F
+
+1)
+'Game when strike, score should be 33.' FAILED
+expected: 33,
+     got: 25 (using ==)
+./spec\bowling_spec.rb:43:
+
+Finished in 0.016 seconds
+
+3 examples, 1 failure
+
+33点にならないといけないところで25点という結果です。
+つまり、ストライクのボーナス分となる第２フレームの第１投、第２投の得点
+が加算されていないのです。
+
+STEP.11 まずは動く実装をつくる
+
+このテストをクリアするためにgame.rbを修正します。
+まず、現状を確認しておきましょう。
+game.rb
+----
+class Game
+  def initialize
+    @score = 0
+  end
+  def roll pins
+    @score += pins
+  end
+  def score 
+    @score
+  end 
+end 
+
+これだと倒したピンがどんどん合計されているので、どのフレームの
+何回目で何本倒したのかがわかりません。そこで、投球時に得点の合算はせずに、
+scoreを参照するときに計算をすることにします。
+
+game.rb
+----
+class Game
+  def initialize
+    @score = []
+  end
+  def roll pins
+    @score << pins
+  end
+  def score 
+    @score.inject{|pins,score|score+=pins}
+  end 
+end 
+
+ただ、これだと計算するタイミングが変わっただけでストライクのときの
+ボーナスは考慮されていません。@scoreのeachで順番に参照して、その投球が
+ストライクだったのかを判別しなければなりません。
+
+game.rb
+----
+class Game
+  def initialize
+    @score = []
+  end
+  def roll pins
+    @score << pins
+  end
+  def score 
+    bonus_count = 0
+    score = 0
+    @score.each do |pins|
+      if pins == 10      # ストライク
+        bonus_count = 2  # ストライクをとると後の２投球分がボーナス
+        score += 10      # ストライク分の得点を加算しておく
+      else
+        if bonus_count == 2
+          score += pins * 2 # ボーナスカウントが残っているので
+                            # ボーナス分とそのフレーム分で２倍の
+                            # 得点を計上する必要がある
+          bonus_count = 1
+        elsif bonus_count == 1
+          score += pins * 2
+          bonus_count = 0
+        else
+          score += pins
+        end
+      end
+    end
+    score
+  end 
+end 
+
+非常にきたないコードになってしまいましたが、テストはどうでしょうか。
+
+>spec spec\bowling_spec.rb
+...
+
+Finished in 0.0 seconds
+
+3 examples, 0 failures
+
+なんとクリアしています。これでこのテストはOKですね！しかし、このコードを放置
+しておくと、のちのち大変な苦労をすることになりそうな匂いがします。
+
+STEP.12 動作するきれいなコード
+
+プログラムの動きを変更することなくコードを書きかえる作業を「リファクタリング」といいます。
+TDDではまず「汚くても動くコード」を実装してから、リファクタリングをおこなうことで、常に変更
+しやすいクリーンなコードを保ちます。さっそくgame.rbをリファクタリングしていきましょう。
+
+リファクタリングのやり方はいろいろありますが、基本的には「重複をなくす」ことが重要です。
+
+game.rb
+----
+class Game
+  def initialize
+    @score = []
+  end
+  def roll pins
+    @score << pins
+  end
+  def score 
+    bonus_count = 0
+    score = 0
+    @score.each do |pins|
+      if pins == 10      # ストライク
+        bonus_count = 2  # ストライクをとると後の２投球分がボーナス
+        score += 10      # ストライク分の得点を加算しておく
+      else
+        if bonus_count == 2
+          score += pins * 2 # ボーナスカウントが残っているので
+                            # ボーナス分とそのフレーム分で２倍の
+                            # 得点を計上する必要がある
+          bonus_count = 1
+        elsif bonus_count == 1
+          score += pins * 2
+          bonus_count = 0
+        else
+          score += pins
+        end
+      end
+    end
+    score
+  end 
+end 
+
+このコードのscoreメソッドは下記のようにリファクタリングできそうです。
+
+  def score 
+    bonus_count = 0
+    score = 0
+    @score.each do |pins|
+      if pins == 10         # ストライク
+        bonus_count = 2     # ストライクをとると後の２投球分がボーナス
+      elsif bonus_count > 0 # ボーナスカウントが残っていたら
+        score += pins       # ボーナス分を計上
+        bonus_count -= 1    # カウントを１減らす
+      end
+      score += pins         # 当該投球分の得点を計上
+    end
+    score
+  end 
+
+ただしくリファクタリングされているかどうかは、もちろんテストによって確認します。
+> spec spec\bowling_spec.rb
+...
+
+Finished in 0.016 seconds
+
+3 examples, 0 failures
+
+どうやら大丈夫のようです。これで次に進むことができます。

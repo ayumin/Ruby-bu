@@ -1,0 +1,178 @@
+Ruby部　各位 
+
+おつかれさまです、相澤です。 
+RSpecによるTDD(テスト駆動開発)の実演Step by Stepのつづきです。
+質問や突込みなどはこのメールに返信してください。 
+
+STEP.7 前回までのおさらい
+
+前回までの作業で、各rubyスクリプトは以下のようになっているはずです。
+spec\spec_helper.rb
+----
+require 'rubygems' 
+require 'spec' 
+$:.unshift(File.dirname(__FILE__) + '/../lib') 
+
+spec\bowling_spec.rb
+----
+require (File.dirname(__FILE__) + '/spec_helper') 
+require 'game' 
+describe Game do 
+  describe "when all roll was gutter" do 
+    before do 
+      @game = Game.new 
+      20.times do     # 全部ガターの場合は20回投球することになる
+        @game.roll(0) # rollは倒したピンの数を引数にとる
+      end
+    end 
+    it "score should be 0." do 
+      @game.score.should == 0 # スコアは0点であること 
+    end 
+  end 
+end 
+
+lib/game.rb
+----
+class Game 
+  def roll pins 
+  end 
+  def score 
+    0 
+  end 
+end 
+
+作業を再開する前に、念のためもう一度テストを実行しておきましょう。
+
+> spec spec\bowling_spec.rb
+.
+
+Finished in 0.015 seconds
+
+1 example, 0 failures
+
+ちゃんと成功しましたね。TDDでは必ずテストを先に記述してテストが失敗したときにだけプロダクトコード
+を記述できます。また、テストはいつでも実行できるので休憩が終わって作業を再開するときやちょっと気分
+転換をするときにもテストを実行します。
+このように気軽にテストを実行できるのは、ちいさく少しずつテストを積み上げていくTDDの特徴です。
+
+では作業を再開します。
+
+STEP.8 あたらしいテストを記述する
+
+ひとつのテストが成功したので新たなテストを記述します。＃TC-002は「全部１本倒した場合」期待する結果が
+「点数は20点であること」を確認します。全て１本しか倒せなかった場合の投球数は全部ガターのときと同じく
+20回です。specファイルは以下のようになります。
+
+spec\bowling_spec.rb
+----
+require (File.dirname(__FILE__) + '/spec_helper') 
+require 'game' 
+describe Game do 
+  describe "when all roll was gutter" do 
+    before do 
+      @game = Game.new 
+      20.times do     # 全部ガターの場合は20回投球することになる
+        @game.roll(0) # rollは倒したピンの数を引数にとる
+      end
+    end 
+    it "score should be 0." do 
+      @game.score.should == 0 # スコアは0点であること 
+    end 
+  end
+  describe "when all roll was 1 pin," do 
+    before do 
+      @game = Game.new 
+      20.times do     # 全部１本倒した場合は20回投球することになる
+        @game.roll(1)
+      end
+    end 
+    it "score should be 20." do 
+      @game.score.should == 20 # スコアは20点であること 
+    end 
+  end 
+end 
+
+新しいテストを記述したのでテストします。
+
+> spec spec\bowling_spec.rb
+.F
+
+1)
+'Game when all roll was 1 pin, score should be 20.' FAILED
+expected: 20,
+     got: 0 (using ==)
+./spec\bowling_spec.rb:23:
+
+Finished in 0.015 seconds
+
+2 examples, 1 failure
+
+失敗しました。
+それではgame.rbを修正してこのテストを成功させるようにしたいとおもいます。 
+このテストに成功するために最少の変更をgame.rbにおこないます。 
+
+game.rb 
+---- 
+class Game 
+  def roll pins 
+  end 
+  def score 
+    20 
+  end 
+end 
+
+これでよいのでしょうか？良いかどうかを確認するにはやはりテストを実行します。
+
+1)
+'Game when all roll was gutter score should be 0.' FAILED
+expected: 0,
+     got: 20 (using ==)
+./spec\bowling_spec.rb:12:
+
+Finished in 0.0 seconds
+
+2 examples, 1 failure
+
+今回追加したテストは成功したみたいですが、前回成功したテストで失敗しています。
+いわゆるデグレードを起こしている状態ですね。これではダメなのでもうちょっと考えましょう。
+
+投げた回ごとに合計で倒したピンの数を足しこんでいけば20回ガターだった場合は0点でかつ
+20回1本しか倒さなかった場合は20点になりそうです。つまり合計で倒したピンの本数をGameオブジェクト
+の状態として記憶しておく必要があります。
+と、いうことはインスタンス変数が必要だということがわかるとおもいます。
+ここでは@scoreというインスタンス変数に、倒したピンの数を足しこんでいくことにします。
+
+game.rb
+----
+class Game
+  def initialize
+    @score = 0 # インスタンス化されたときに初期化される
+  end
+  def roll pins
+    @score += pins # 投球のたびに倒したピンの数が加算される
+  end
+  def score 
+    @score
+  end 
+end
+
+> spec spec\bowling_spec.rb
+..
+
+Finished in 0.015 seconds
+
+2 examples, 0 failures
+
+テストに成功しました。これで＃TC-002も完了です！
+
+テストをパスさせる方法その１:Fake it
+
+前回はちょっとインチキな方法でテストをパスさせたことを覚えているでしょうか。
+そして今回追加したあたらしいテストによって、インチキが暴かれて正しい実装がおこなわれました。
+前回のようなテストの通し方も実は立派なTDDの技法のひとつなのです。
+
+テストをパスさせるためだけのインチキな実装をおこなうことをFake itと呼びます。TDDはその名の
+とおりテストを書き、実行することによって開発を進めていきます。フォーカスすべきは「どうやって
+テストを通すか」なのです。そのため正しい実装をあれこれ考えるよりFake itによってテストをパスし、
+あたらしいテストによって正しい実装を導き出すのです。
+
