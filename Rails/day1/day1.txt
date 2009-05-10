@@ -1,114 +1,114 @@
-�����ꂳ�܂ł��A���V�ł��B
-��������Ruby on Rails�ɂ��Web�A�v���P�[�V�����̊J����@��A�ڂ��܂��B
-�����ˍ��݂Ȃǂ͂��̃��[���ɕԐM���Ă��������B
+おつかれさまです、相澤です。
+今日からRuby on RailsによるWebアプリケーションの開発手法を連載します。
+質問や突込みなどはこのメールに返信してください。
 
-Rails�Ƃ�
+Railsとは
 
-Ruby on Rails�i���r�[�I�����C���Y�j�̓I�[�v���\�[�X��Web�A�v���P�[�V�����t���[�����[�N�ł��B
-Ruby�ɂ��_��ȋL�q�A���^�v���O���~���O�����p����MVC�A�[�L�e�N�`���Ɋ�Â�Web�A�v���P�[�V�����������ɊJ�����邱�Ƃ��\�ł��B
+Ruby on Rails（ルビーオンレイルズ）はオープンソースのWebアプリケーションフレームワークです。
+Rubyによる柔軟な記述、メタプログラミングを活用してMVCアーキテクチャに基づくWebアプリケーションを高速に開発することが可能です。
 
-Rails�̓N�w�͂Q�̗v�f�Ɏx�����Ă��܂��B
-�ECoC�iConversion over Configuration�F�K��ɏ]�����Ƃɂ���Đݒ��s�v�Ƃ���j
-�EDRY�iDon't Replay Yourself�F�������Ƃ��J��Ԃ��Ȃ��j
-Rails�ł�Rails�̍�@�ɏ]���ăR�[�h���L�q���邱�ƂŁA�]���K�v�������ݒ�t�@�C�����قƂ�Ǐ������ƂȂ��A�܂��K�v�ȏ��̓A�v���P�[�V�����̂�����ӏ��ɋL�q���邱�ƂŕK�v�ȏ������������邱�Ƃ��\�ł��B
-���̑̕\�I�ȗႪRails��OR�}�b�s���O�Ŏg�p�����ActiveRecord�ł��B
-ActiveRecord�ł�
+Railsの哲学は２つの要素に支えられています。
+・CoC（Conversion over Configuration：規約に従うことによって設定を不要とする）
+・DRY（Don't Replay Yourself：同じことを繰り返さない）
+RailsではRailsの作法に従ってコードを記述することで、従来必要だった設定ファイルをほとんど書くことなく、また必要な情報はアプリケーションのただ一箇所に記述することで必要な処理を実現することが可能です。
+その体表的な例がRailsのORマッピングで使用されるActiveRecordです。
+ActiveRecordでは
 
-�@�E�e�[�u���������f���N���X�̕����`�Ƃ���
-�@�E��L�[��id�Ƃ����J�����Ő����^�̎����C���N�������g�����Ƃ���
+　・テーブル名をモデルクラスの複数形とする
+　・主キーはidというカラムで整数型の自動インクリメント属性とする
 
-�@�Ƃ����Q�̋K�����邱�ƂŃf�[�^�x�[�X�Ƃ̘A�g���قƂ�ǃR�[�f�B���O���邱�ƂȂ��������邱�Ƃ��\�ł��B�܂��A�e�[�u���ɂǂ�ȃJ���������݂��邩�̓f�[�^�x�[�X�̃X�L�[�}�����Q�Ƃ��邽�ߏ]���̃h���C���I�u�W�F�N�g�̂悤�Ƀe�[�u���J�����ƈ�΂̃t�B�[���h���`���Ȃ��Ă��A���ꂪ���݂��邩�̂��Ƃ���舵�����Ƃ��ł��܂��B
+　という２つの規約を守ることでデータベースとの連携をほとんどコーディングすることなく実現することが可能です。また、テーブルにどんなカラムが存在するかはデータベースのスキーマ情報を参照するため従来のドメインオブジェクトのようにテーブルカラムと一対のフィールドを定義しなくても、それが存在するかのごとく取り扱うことができます。
 
-���̂悤��Rails��p���邱�Ƃŏ]���̊J���ŕK�v�������ݒ�t�@�C���ixml�ŋL�q����邱�Ƃ������j�������K�v�������Ȃ�A�J���҂̓A�v���P�[�V�����̋@�\�̖{�������������������邱�ƂɏW�����邱�Ƃ��ł��܂��B�������ARails�ɂ�鍂�����Y���𓾂邽�߂ɂ�Rails�̍�@�i�K��j�ɂ��ď\���ɏK�n���Ă���K�v������ARails�̍�@�ɂ��Ȃ�������������悤�Ƃ���ꍇ�ɂ͂Ƃ���ɊJ��������Ȃ�Ƃ������_������܂��B
-���̂��߁ARails�ɂ��J���̊�{�헪�͑��ɁuRails�̋K��ɑ����ĊJ������v���Ƃ������̃J�M�ƂȂ�܂��B
-Rails�̍�@���K�����邽�߂ɍł����ʓI�ȕ��@�́ARails���g�p���Ď��ۂɃA�v���P�[�V�������\�z���邱�Ƃł��B����ł͎��ۂ�Rails���g�p���ĊȒP�ȃA�v���P�[�V�������쐬���Ă݂܂��傤�B
+このようにRailsを用いることで従来の開発で必要だった設定ファイル（xmlで記述されることが多い）を書く必要が無くなり、開発者はアプリケーションの機能の本質部分だけを実装することに集中することができます。だたし、Railsによる高い生産性を得るためにはRailsの作法（規約）について十分に習熟している必要があり、Railsの作法によらない動作を実現しようとする場合にはとたんに開発が難しくなるという欠点もあります。
+そのため、Railsによる開発の基本戦略は第一に「Railsの規約に則って開発する」ことが成功のカギとなります。
+Railsの作法を習得するために最も効果的な方法は、Railsを使用して実際にアプリケーションを構築することです。それでは実際にRailsを使用して簡単なアプリケーションを作成してみましょう。
 
-STEP0. �J�����̏���
+STEP0. 開発環境の準備
 
-Ruby�{�̂̃o�[�W������1.8.6�ȏ�ł���K�v������܂��BRuby�̃o�[�W�������m�F���邽�߂ɂ͉��L�̃R�}���h�����s���܂��B�i���������ϐ��̐ݒ���Y�ꂸ�ɂ����Ȃ��Ă��������j
+Ruby本体のバージョンが1.8.6以上である必要があります。Rubyのバージョンを確認するためには下記のコマンドを実行します。（もちろん環境変数の設定も忘れずにおこなってください）
 
 ruby -v
 
-�܂��ARails���g�p���邽�߂ɂ͂�������Ruby�̃��C�u���������炩���߃C���X�g�[������Ă���K�v������܂��B�����͂������RubyGems�ɂ���ăI�����C���ŃC���X�g�[�����邱�Ƃ��\�ł��B
-Rails�{�͉̂��L�̃R�}���h�ŃC���X�g�[���ł��܂��B
+また、Railsを使用するためにはいくつかのRubyのライブラリがあらかじめインストールされている必要があります。これらはいずれもRubyGemsによってオンラインでインストールすることが可能です。
+Rails本体は下記のコマンドでインストールできます。
 
 gem install rails
-rails�̃C���X�g�[���������Ȃ��ƁA�ˑ�����ȉ��̃��C�u�����������ɃC���X�g�[������܂��B
+railsのインストールをおこなうと、依存する以下のライブラリも同時にインストールされます。
 
-�EActiveSupport
-�@Rails�A�v���P�[�V�����Ŏg�p����邳�܂��܂ȃR�A�g�����C�u����
-�EActionPack
-�@Rails�A�v���P�[�V������View�AController�������������郉�C�u����
-�EActiveRecord
-�@Rails�W����OR�}�b�s���O�̂��߂̃��C�u����
-�EActiveResource
-�@�O�����\�[�X���V�[�����X�Ɏ�舵�����߂̃��C�u����
-�EActionMailer
-�@���[���Ɋւ��鑀��������Ȃ����߂̃��C�u����
+・ActiveSupport
+　Railsアプリケーションで使用されるさまざまなコア拡張ライブラリ
+・ActionPack
+　RailsアプリケーションのView、Controller部分を実現するライブラリ
+・ActiveRecord
+　Rails標準のORマッピングのためのライブラリ
+・ActiveResource
+　外部リソースをシームレスに取り扱うためのライブラリ
+・ActionMailer
+　メールに関する操作をおこなうためのライブラリ
 
-rails���������C���X�g�[�����ꂽ���Ƃ��m�F����ɂ͈ȉ��̃R�}���h�����s���܂��B
+railsが正しくインストールされたことを確認するには以下のコマンドを実行します。
 
 rails -v
-�Ȃ����̘A�ڂł͂Ƃ��Ɍ��y���Ȃ�����Rails 2.3.2���C���X�g�[���������̂Ƃ��Đi�߂Ă����܂��B
+なおこの連載ではとくに言及がない限りRails 2.3.2をインストールしたものとして進めていきます。
 
-�܂��ARails�ŃA�v���P�[�V�������\�z����ꍇ�ɂ��܂��܂Ȉ�A�̃^�X�N�����s���邽�߂�Rake�Ƃ������C�u�������K�v�ł��BRake���C���X�g�[������ɂ͉��L�̃R�}���h�����s���܂��B
+また、Railsでアプリケーションを構築する場合にさまざまな一連のタスクを実行するためにRakeというライブラリが必要です。Rakeをインストールするには下記のコマンドを実行します。
 
 gem install rake
 
-RubyGems�̃o�[�W�������Â��ꍇ�ɂ͏�L�̃R�}���h�����s������ARails����肭�����Ȃ������肵�܂��BRubyGems�̃o�[�W������1.3.1�ȏ�̂��̂��g�p���Ă��������BRubyGems�̃o�[�W�������m�F���邽�߂ɂ͉��L�̃R�}���h�����s���܂��B
+RubyGemsのバージョンが古い場合には上記のコマンドが失敗したり、Railsが上手く動かなかったりします。RubyGemsのバージョンは1.3.1以上のものを使用してください。RubyGemsのバージョンを確認するためには下記のコマンドを実行します。
 
 gem -v
 
-�Â�RubyGems���X�V����ɂ͉��L�̃R�}���h�����s���܂��B
+古いRubyGemsを更新するには下記のコマンドを実行します。
 
 gem install rubygems-update
 
-����ɂ��̌�A���L�̃R�}���h�����s���邱�Ƃ�RubyGems���X�V���邱�Ƃ��\�ł��B
+さらにその後、下記のコマンドを実行することでRubyGemsを更新することが可能です。
 
 update_rubygems
 
-�܂�1.3.1�ȏ�̃o�[�W������RubyGems���ŐV�̂��̂ɍX�V���邽�߂ɂ͉��L�̃R�}���h�����s���܂��B
+また1.3.1以上のバージョンのRubyGemsを最新のものに更新するためには下記のコマンドを実行します。
 
 gem update --system
 
-����Ƀf�[�^�x�[�X�Ƃ̐ڑ��������Ȃ����߂ɁA�Ή�����RDBMS�p�̃h���C�o���K�v�ł��B���̘A�ڂł�RDBMS��SQLite3�𗘗p���܂��̂ŁA���L�̃R�}���h��SQLite3�̃h���C�o���C���X�g�[�����Ă��������B
+さらにデータベースとの接続をおこなうために、対応するRDBMS用のドライバが必要です。この連載ではRDBMSにSQLite3を利用しますので、下記のコマンドでSQLite3のドライバをインストールしてください。
 
 gem install sqlite3-ruby
 
-Debian�n��Linux�ł͂��炩����ruby-dev��libsqlite3-dev���C���X�g�[������Ă��Ȃ��ƃC���X�g�[���Ɏ��s���܂��B�����̃��C�u�����͉��L�̃R�}���h�ŃC���X�g�[�����܂��B
+Debian系のLinuxではあらかじめruby-devとlibsqlite3-devがインストールされていないとインストールに失敗します。これらのライブラリは下記のコマンドでインストールします。
 apt-get install ruby-dev
 apt-get install libsqlite3-dev
 
-Windows���ł͒񋟂���Ă���gem�̓s���ɂ��ŐV�ł̃h���C�o���C���X�g�[�����邱�Ƃ��ł��܂���BWindows���ō�Ƃ�����ꍇ�͉��L�̃R�}���h�Ńo�[�W����1.2.3���C���X�g�[�����܂��B
+Windows環境では提供されているgemの都合により最新版のドライバをインストールすることができません。Windows環境で作業をする場合は下記のコマンドでバージョン1.2.3をインストールします。
 
 gem install sqlite3-ruby --version '=1.2.3'
 
-sqlite3-ruby������ɃC���X�g�[��������Rails����̃e�[�u������͉\�ł�������DB�t�@�C���̒��g���݂�Ƃ��̂��߂�SQLite3�{�̂��C���X�g�[�����Ă����ƕ֗��ł��B
-SQLite3�{�͉̂��L�̃T�C�g����_�E�����[�h���Ă��������B
+sqlite3-rubyが正常にインストールされればRailsからのテーブル操作は可能ですが直接DBファイルの中身をみるときのためにSQLite3本体もインストールしておくと便利です。
+SQLite3本体は下記のサイトからダウンロードしてください。
 
-�ESQLite Download Page
-�@http://www.sqlite.org/download.html
+・SQLite Download Page
+　http://www.sqlite.org/download.html
 
-Windows���p�ɃR���p�C�����ꂽ���̂�sqlite-3_6_14.zip�ł��B�y�[�W�̒��قǂɃ����N������܂��B
-zip�t�@�C�����𓀂����sqlite3.exe���擾�ł��܂�������p�X�̒ʂ����t�H���_�ɃR�s�[����΃C���X�g�[���͊����ł��B����ɋN�����邱�Ƃ��m�F����ɂ̓R�}���h�v�����v�g�ňȉ��̃R�}���h�����s���܂��B
+Windows環境用にコンパイルされたものはsqlite-3_6_14.zipです。ページの中ほどにリンクがあります。
+zipファイルを解凍するとsqlite3.exeが取得できますこれをパスの通ったフォルダにコピーすればインストールは完了です。正常に起動することを確認するにはコマンドプロンプトで以下のコマンドを実行します。
 
 sqlite3 --version
 
-�Ȃ��ADebian�n��Linux���ł͉��L�̃R�}���h�����s����ƃC���X�g�[������܂��B
+なお、Debian系のLinux環境では下記のコマンドを実行するとインストールされます。
 
 aot-get install sqlite3
 
-STEP1. Rails�A�v���P�[�V�����̐��`���쐬����
+STEP1. Railsアプリケーションの雛形を作成する
 
-rails�R�}���h��p���ĔC�ӂ̏ꏊ�ɃA�v���P�[�V�����̐��`���쐬���邱�Ƃ��ł��܂��B
-���̘A�ڂł͍�ƃt�H���_��C:\work�ɂ������̂Ƃ��Ă����߂Ă����܂��B�قȂ�t�H���_����ƃt�H���_�ɂ����ꍇ�ɂ͓K�X�ǂݑւ��Ă��������B
+railsコマンドを用いて任意の場所にアプリケーションの雛形を作成することができます。
+この連載では作業フォルダをC:\workにしたものとしてすすめていきます。異なるフォルダを作業フォルダにした場合には適宜読み替えてください。
 
-�܂��R�}���h�v�����v�g��C:\work�Ɉړ����ĉ��L�̃R�}���h�����s���܂��B
+まずコマンドプロンプトでC:\workに移動して下記のコマンドを実行します。
 
 rails todo
 
-todo�̕������v���W�F�N�g���ɂȂ�܂��B�A�v���P�[�V�����̋����ɂ͉e�����Ȃ��̂ŉ��ł��\���܂���B
-���s���ʂ͈ȉ��̂悤�ɂȂ�A���`�ƂȂ�t�H���_��t�@�C���������I�ɍ쐬����܂��B
+todoの部分がプロジェクト名になります。アプリケーションの挙動には影響しないので何でも構いません。
+実行結果は以下のようになり、雛形となるフォルダやファイルが自動的に作成されます。
 
 C:\work>rails todo
       create
@@ -116,59 +116,59 @@ C:\work>rails todo
       create  app/helpers
       create  app/models
       create  app/views/layouts
-�@�@�@�i�����j
+　　　（中略）
       create  log/server.log
       create  log/production.log
       create  log/development.log
       create  log/test.log
 
-work�̒���todo�Ƃ����f�B���N�g�����쐬����A���̒��ɐ��`�̍\�����쐬����Ă��邱�Ƃ��m�F���Ă��������B�ȉ��̐����ł͂���todo�f�B���N�g���̃p�X��RAILS_ROOT�ƕ\�L���܂��BRAILS_ROOT�����ɍ쐬�����e�t�@�C���E�f�B���N�g���̖����͉��L�̂Ƃ���ł��B
-�@app�FRails�A�v���P�[�V�����̖{�̂��i�[�����ꏊ
-�@config�FRails�A�v���P�[�V�����̐ݒ�t�@�C�����i�[�����ꏊ
-�@db�FRails�A�v���P�[�V�������g�p����DB�̃}�C�O���[�V�������A�X�L�[�}��񂪊i�[�����ꏊ
-�@doc�FRails�A�v���P�[�V�����̃h�L�������g�ނ��i�[�����ꏊ
-�@lib�FRails�A�v���P�[�V�����Ŏg�p���郉�C�u�������i�[����ꏊ
-�@log�F�T�[�o�[�̎��s���O�Ȃǂ��i�[�����ꏊ
-�@public�F�ÓI��HTML�t�@�C���Ȃǂ��i�[�����ꏊ
-�@Rakefile�FRails�A�v���P�[�V�������J�����邽�߂ɕK�v�Ȉ�A�̎������s�^�X�N���`���Ă���t�@�C��
-�@README�FRails�A�v���P�[�V�����̐������L�q����t�@�C��
-�@script�FRails�A�v���P�[�V�������J�����邽�߂ɕK�v�ȃX�N���v�g�ނ��i�[�����ꏊ
-�@test�FRails�A�v���P�[�V�����̃e�X�g�X�N���v�g���i�[�����ꏊ
-�@tmp�F�ꎞ�t�@�C�����i�[�����ꏊ
-�@vendor�F�@�\�g���̂��߂̃v���O�C�����i�[�����ꏊ
+workの中にtodoというディレクトリが作成され、その中に雛形の構成が作成されていることを確認してください。以下の説明ではこのtodoディレクトリのパスをRAILS_ROOTと表記します。RAILS_ROOT直下に作成される各ファイル・ディレクトリの役割は下記のとおりです。
+　app：Railsアプリケーションの本体が格納される場所
+　config：Railsアプリケーションの設定ファイルが格納される場所
+　db：Railsアプリケーションが使用するDBのマイグレーション情報、スキーマ情報が格納される場所
+　doc：Railsアプリケーションのドキュメント類が格納される場所
+　lib：Railsアプリケーションで使用するライブラリを格納する場所
+　log：サーバーの実行ログなどが格納される場所
+　public：静的なHTMLファイルなどが格納される場所
+　Rakefile：Railsアプリケーションを開発するために必要な一連の自動実行タスクを定義しているファイル
+　README：Railsアプリケーションの説明を記述するファイル
+　script：Railsアプリケーションを開発するために必要なスクリプト類が格納される場所
+　test：Railsアプリケーションのテストスクリプトが格納される場所
+　tmp：一時ファイルが格納される場所
+　vendor：機能拡張のためのプラグインが格納される場所
 
-STEP2. Rails�A�v���P�[�V�������쐬����
+STEP2. Railsアプリケーションを作成する
 
-����ł�rails�A�v���P�[�V�����̐��`���ł����̂ŁA��������ToDo�Ǘ��������Ȃ��ȒP�ȃA�v���P�[�V�������쐬���Ă݂܂��B
-Rails�ōł��ȒP�ɃA�v���P�[�V�������쐬���邽�߂ɂ�scaffold�Ƃ����@�\���g�p����̂���ʓI�ł��B
-RAILS_ROOT�ŉ��L�̃R�}���h�����s���܂��B
+それではrailsアプリケーションの雛形ができたので、さっそくToDo管理をおこなう簡単なアプリケーションを作成してみます。
+Railsで最も簡単にアプリケーションを作成するためにはscaffoldという機能を使用するのが一般的です。
+RAILS_ROOTで下記のコマンドを実行します。
 
 ruby script\generate scaffold todo title:string due:date priority:integer
 
-��L�̃R�}���h��script�f�B���N�g���ɂ���generate�X�N���v�g��scaffold�@�\�����s������̂ł��B
-generate�X�N���v�g��scaffold�����s����Ƃ��̏����͉��L�̂Ƃ���ł��B
+上記のコマンドはscriptディレクトリにあるgenerateスクリプトのscaffold機能を実行するものです。
+generateスクリプトでscaffoldを実行するときの書式は下記のとおりです。
 
-generate scaffold ���f�����i�P���`�j[�J������:�^] ...
+generate scaffold モデル名（単数形）[カラム名:型] ...
 
-���f������DB�̃e�[�u���ɕR�t�����f���N���X�̖��O���w�肵�܂��BRails�̍�@�ɏ]���ꍇ�A���f�����͖����̒P���`�ɂ��܂��B�����ToDo���X�g���쐬����̂Ń��f������todo�Ƃ��܂����B���̃��f���N���X�Ɋ֘A�t������e�[�u�����͎����I��todos�i���f�����̕����`�j�ɂȂ�܂��B
-���f�����Ɉ��������Ďw�肷��̂͂��̃��f���i���e�[�u���j�ɂ�������J�����Ɋւ�����ł��B�Ƃ肠����ToDo�Ǘ��ɕK�v�ɂȂ肻����3�̃J�����ititle�Adue�Apriority�j���w�肵�Ă��܂��B�J��������:�i�R�����j�̉E���ɂ͂��̃J�����̌^���w�肵�܂��B�����title�͕�����^�Adue�͓��t�^�Apriority�͐����^�Ƃ��܂����B
+モデル名はDBのテーブルに紐付くモデルクラスの名前を指定します。Railsの作法に従う場合、モデル名は名詞の単数形にします。今回はToDoリストを作成するのでモデル名はtodoとしました。このモデルクラスに関連付けられるテーブル名は自動的にtodos（モデル名の複数形）になります。
+モデル名に引き続いて指定するのはそのモデル（≒テーブル）にもたせるカラムに関する情報です。とりあえずToDo管理に必要になりそうな3つのカラム（title、due、priority）を指定しています。カラム名の:（コロン）の右側にはそのカラムの型を指定します。今回はtitleは文字列型、dueは日付型、priorityは整数型としました。
 
-�Ȃ��A���̂Ƃ��Ɏw��ł���^�̈ꗗ�͉��L�̂Ƃ���ł��B
+なお、このときに指定できる型の一覧は下記のとおりです。
 
-�@string�F������^
-�@text�F�e�L�X�g�^
-�@integer�F�����^
-�@float�F���������_�^
-�@decimal�F�Œ菬���_�^
-�@datetime�F���t�����^
-�@timestamp�F�^�C���X�^���v�^
-�@time�F�����^
-�@date�F���t�^
-�@binary�F�o�C�i���^
-�@boolean�F�^�U�l�^
+　string：文字列型
+　text：テキスト型
+　integer：整数型
+　float：浮動小数点型
+　decimal：固定小数点型
+　datetime：日付時刻型
+　timestamp：タイムスタンプ型
+　time：時刻型
+　date：日付型
+　binary：バイナリ型
+　boolean：真偽値型
 
-�����܂ł̍�Ƃ�Ruby���̃A�v���P�[�V�����\�z�͊����ł��B�i���ꂾ���ł��I�j���Ƃ͍��쐬�����X�L�[�}����DB�ɔ��f������K�v������܂��B
-�ǂ̂悤�ȃX�L�[�}���DB�ɔ��f����邩���m�F���邽�߂ɂ�RAILS_ROOT\db\migrate�ɍ쐬���ꂽ20090507171612_create_todos.rb�Ƃ����t�@�C�����݂܂��B�����̕�����generate�X�N���v�g�����s�������Ԃ̃^�C���X�^���v�ł��B
+ここまでの作業でRuby側のアプリケーション構築は完了です。（これだけです！）あとは今作成したスキーマ情報をDBに反映させる必要があります。
+どのようなスキーマ情報がDBに反映されるかを確認するためにはRAILS_ROOT\db\migrateに作成された20090507171612_create_todos.rbというファイルをみます。数字の部分はgenerateスクリプトを実行した時間のタイムスタンプです。
 
 20090507171612_create_todos.rb
 ----
@@ -188,42 +188,42 @@ class CreateTodos < ActiveRecord::Migration
   end
 end
 
-�X�L�[�}����Ruby��DSL�iDomain Specific Language�F�h���C���ŗL����j�Ƃ��Ă̋@�\�𐶂�����Ruby�R�[�h�Ƃ��ċL�q����Ă��܂��B
-����̏ꍇCreateTodos�Ƃ����N���X�ɂQ�̃N���X���\�b�h�i���m�ɂ͓��ك��\�b�h�jup��down����`����܂����Bup��DB�ւ̃X�L�[�}���̔��f��i�߂�Ƃ��Ɏ��s����Adown�̓X�L�[�}�������[���o�b�N����Ƃ��Ɏ��s����܂��B
+スキーマ情報はRubyのDSL（Domain Specific Language：ドメイン固有言語）としての機能を生かしてRubyコードとして記述されています。
+今回の場合CreateTodosというクラスに２つのクラスメソッド（正確には特異メソッド）upとdownが定義されました。upはDBへのスキーマ情報の反映を進めるときに実行され、downはスキーマ情報をロールバックするときに実行されます。
 
-SQL�𗝉����Ă����up���\�b�h��down���\�b�h���������Ă��邩�����ł��܂���ˁHup���\�b�h��SQL��
+SQLを理解していればupメソッドやdownメソッドが何をしているか理解できますよね？upメソッドはSQLの
 
-�@create table todos ( 
-�@�@title string, 
-�@�@due date, 
-�@�@priority integer
-�@);
+　create table todos ( 
+　　title string, 
+　　due date, 
+　　priority integer
+　);
 
-�Ƃقړ��`�ł����ARails�̋K��ɂ��Öقɂ�����J�������܂߂�Ɗ��S�ɓ�����SQL�͉��L�̂悤�ɂȂ�܂��B
+とほぼ同義ですが、Railsの規約により暗黙につくられるカラムを含めると完全に等価なSQLは下記のようになります。
 
-�@create table todos ( 
-�@�@id integer primary key autoincliment, -- ��L�[��id�Ƃ������O�Ő����^�̎����C���N�������g
-�@�@title string, 
-�@�@due date, 
-�@�@priority integer,
-�@�@created_at timestamp, -- ���R�[�h�쐬�^�C���X�^���v���Z�b�g�����
-�@�@updated_at timestamp  -- ���R�[�h�ŏI�X�V�^�C���X�^���v���Z�b�g�����
-�@);
+　create table todos ( 
+　　id integer primary key autoincliment, -- 主キーはidという名前で整数型の自動インクリメント
+　　title string, 
+　　due date, 
+　　priority integer,
+　　created_at timestamp, -- レコード作成タイムスタンプがセットされる
+　　updated_at timestamp  -- レコード最終更新タイムスタンプがセットされる
+　);
 
-���l��down���\�b�h��
+同様にdownメソッドは
 
-�@drop teble todos;
+　drop teble todos;
 
-�Ɠ����ł��Bup��down�̒��Ŏg�p����Ă���create_table���\�b�h��drop_table���\�b�h��ActiveRecord::ConnectionAdapters::SchemaStatements���W���[���ɒ�`����Ă��܂��B���\�b�h�̏ڍׂ͉��L��URL���Q�Ƃ��Ă��������B
+と等価です。upやdownの中で使用されているcreate_tableメソッドやdrop_tableメソッドはActiveRecord::ConnectionAdapters::SchemaStatementsモジュールに定義されています。メソッドの詳細は下記のURLを参照してください。
 
-�@Rials API/Module
-�@ActiveRecord::ConnectionAdapters::SchemaStatements
-�@http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html
+　Rials API/Module
+　ActiveRecord::ConnectionAdapters::SchemaStatements
+　http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html
 
-STEP3. �X�L�[�}�����}�C�O���[�g����
+STEP3. スキーマ情報をマイグレートする
 
-���āA����ł͂��̃X�L�[�}����DB�ɔ��f�����Ă݂܂��傤�B�X�L�[�}����DB�ɔ��f�����邱�Ƃ��}�C�O���[�g����Ƃ����܂��B
-�}�C�O���[�g������ɂ�Rake��p����̂��ȒP�ł��BRAILS_ROOT�ŉ��L�̃R�}���h�����s���܂��B
+さて、それではこのスキーマ情報をDBに反映させてみましょう。スキーマ情報をDBに反映させることをマイグレートするといいます。
+マイグレートをするにはRakeを用いるのが簡単です。RAILS_ROOTで下記のコマンドを実行します。
 
 C:\work\todo>rake db:migrate
 (in C:/work/todo)
@@ -232,8 +232,8 @@ C:\work\todo>rake db:migrate
    -> 0.0160s
 ==  CreateTodos: migrated (0.0160s) ===========================================
 
-�}�C�O���[�g�ɐ�������Ə�̂悤�Ȏ��s���ʂƂȂ�܂��B���̂Ƃ����s���ꂽ�̂͂����قǂ�up���\�b�h�ł��B
-���Ȃ݂ɍ������Ȃ����}�C�O���[�g�������������ꍇ�i���[���o�b�N�������j�͈ȉ��̃R�}���h�����s���܂��B
+マイグレートに成功すると上のような実行結果となります。このとき実行されたのはさきほどのupメソッドです。
+ちなみに今おこなったマイグレートを取り消したい場合（ロールバックしたい）は以下のコマンドを実行します。
 
 C:\work\todo>rake db:rollback
 (in C:/work/todo)
@@ -242,8 +242,8 @@ C:\work\todo>rake db:rollback
    -> 0.0000s
 ==  CreateTodos: reverted (0.0160s) ===========================================
 
-���̂Ƃ��Ɏ��s���ꂽ�̂�down���\�b�h�ł��B
-rake�Ɏw�肵��db:migrate��db:rollback�̂��Ƃ�Rake�^�X�N�Ƃ����܂��BRake�^�X�N��RAILS_ROOT\Rakefile�ɒ�`����Ă���A�����Œǉ����邱�Ƃ��\�ł��B���ݎg�p�ł���Rake�^�X�N�̈ꗗ���݂�ɂ͈ȉ��̂悤�ɃR�}���h�����s���܂��B
+このときに実行されたのはdownメソッドです。
+rakeに指定したdb:migrateやdb:rollbackのことをRakeタスクといいます。RakeタスクはRAILS_ROOT\Rakefileに定義されており、自分で追加することも可能です。現在使用できるRakeタスクの一覧をみるには以下のようにコマンドを実行します。
 
 C:\work\todo>rake --task
 (in C:/work/todo)
@@ -251,23 +251,23 @@ rake db:abort_if_pending_migrations       # Raises an error if there are pe...
 rake db:charset                           # Retrieves the charset for the c...
 rake db:collation                         # Retrieves the collation for the...
 rake db:create                            # Create the database defined in ...
-�@�@�@�i�����j
+　　　（中略）
 rake tmp:clear                            # Clear session, cache, and socke...
 rake tmp:create                           # Creates tmp directories for ses...
 rake tmp:pids:clear                       # Clears all files in tmp/pids
 rake tmp:sessions:clear                   # Clears all files in tmp/sessions
 rake tmp:sockets:clear                    # Clears all files in tmp/sockets
 
-�eRake�^�X�N�̏ڍׂȋ@�\�͏o�͌��ʂ̉E���̃R�����g���݂Ă��������B
+各Rakeタスクの詳細な機能は出力結果の右側のコメントをみてください。
 
-�X�L�[�}����rollback���Ă��܂����̂ŖY�ꂸ��rake db:migrate�����s���Ă����Ă��������B
-�Ȃ�Ƃ����Rails�A�v���P�[�V�����͊����ł��B
+スキーマ情報をrollbackしてしまったので忘れずにrake db:migrateを実行しておいてください。
+なんとこれでRailsアプリケーションは完成です。
 
-STEP4. �T�[�o�[���N��������m�F������
+STEP4. サーバーを起動し動作確認をする
 
-����ł͎��ۂ�Rails�A�v���P�[�V�����𓮍삳���ē������m�F���Ă݂܂��傤�B
-Rails�ɂ̓A�v���P�[�V�����T�[�o�[�̋N���X�N���v�g��������Ă��܂��B�Ƃ��ɉ������Ȃ���Ԃł�Ruby�W���Y�t��WEBRick�T�[�o�[���e�X�g�p�Ƃ��ėp���܂��BWEBRick�T�[�o�[�͖{�ԗp�̃T�[�o�[�Ƃ��Ă͕͗s���ł����@�\���x���̒P�̃e�X�g�������Ȃ��ɂ͏\���ł��B
-�T�[�o�[���N������ɂ�RAILS_ROOT�ňȉ��̃R�}���h�����s���܂��B
+それでは実際にRailsアプリケーションを動作させて動きを確認してみましょう。
+Railsにはアプリケーションサーバーの起動スクリプトもそろっています。とくに何もしない状態ではRuby標準添付のWEBRickサーバーをテスト用として用います。WEBRickサーバーは本番用のサーバーとしては力不足ですが機能レベルの単体テストをおこなうには十分です。
+サーバーを起動するにはRAILS_ROOTで以下のコマンドを実行します。
 
 C:\work\todo>ruby script\server
 => Booting Mongrel
@@ -275,20 +275,20 @@ C:\work\todo>ruby script\server
 => Call with -d to detach
 => Ctrl-C to shutdown server
 
-�T�[�o�[��localhost��3000�ԃ|�[�g�ŋN�����܂����B�u���E�U�� http://localhost:3000 �ɃA�N�Z�X���Ă݂܂��傤�B
-"Welcome aboard"�Ƃ����^�C�g���̃y�[�W���\������܂������H���ꂪRails�̃f�t�H���g�̃g�b�v��ʂł��B����ł͐�قǍ쐬����ToDo�Ǘ��A�v���P�[�V�����ɃA�N�Z�X���Ă݂܂��B�ȉ���URL���u���E�U�̃A�h���X�o�[�ɓ��͂��Ă��������B
+サーバーがlocalhostの3000番ポートで起動しました。ブラウザで http://localhost:3000 にアクセスしてみましょう。
+"Welcome aboard"というタイトルのページが表示されましたか？これがRailsのデフォルトのトップ画面です。それでは先ほど作成したToDo管理アプ理ケーションにアクセスしてみます。以下のURLをブラウザのアドレスバーに入力してください。
 
 http://localhost:3000/todos
 
-"Listing todos"�Ƃ����^�C�g���̃y�[�W���\������Ă���ΐ����ł��Btodos�e�[�u���ɑ΂���CRUD����������Web�A�v���P�[�V���������ɓ��삵�Ă��܂��B���߂��ɂ�������ToDo����͂��Ă݂܂��傤�B�V����ToDo���쐬����ɂ�"New todo"�Ƃ��������N���N���b�N���܂��B
+"Listing todos"というタイトルのページが表示されていれば成功です。todosテーブルに対するCRUD操作を備えたWebアプリケーションが既に動作しています。ためしにいくつかのToDoを入力してみましょう。新しいToDoを作成するには"New todo"というリンクをクリックします。
 
-"New todo"�Ƃ�����ʂ��\�����ꂽ�͂��ł��Bdue�̓��͗������t����͂���Z���N�g�{�b�N�X�ɂȂ��Ă���̂ɋC�������ł��傤���B����̓X�L�[�}�����쐬����Ƃ��ɓ��t�^���w�肵���̂�Rails�������I�ɐ����������̂ł��B
-�Ȃɂ��K����ToDo����͂��āuCreate�v�{�^����������ToDo�̍쐬�����������|�̃��b�Z�[�W���\������܂��ˁBBack�����N���N���b�N����"Listing todos"��ʂɖ߂�ƁA�m����ToDo���쐬����Ă��܂��B
+"New todo"という画面が表示されたはずです。dueの入力欄が日付を入力するセレクトボックスになっているのに気がついたでしょうか。これはスキーマ情報を作成するときに日付型を指定したのでRailsが自動的に生成したものです。
+なにか適当なToDoを入力して「Create」ボタンを押すとToDoの作成が成功した旨のメッセージが表示されますね。Backリンクをクリックして"Listing todos"画面に戻ると、確かにToDoが作成されています。
 
-"Listing todos"��ʂ�ToDo�̉��ɕ\�������Show�ŕ\���AEdit�ŕҏW�ADestroy�ō폜���ł��܂��B�폜�̎��ɂ͂����ƁuAre you sure?�v�Ƃ����m�F�̃|�b�v�A�b�v�܂ŕ\������܂��B�C�������Ă��܂��ˁB
+"Listing todos"画面のToDoの横に表示されるShowで表示、Editで編集、Destroyで削除ができます。削除の時にはちゃんと「Are you sure?」という確認のポップアップまで表示されます。気が利いていますね。
 
-ToDo�A�v���P�[�V�����̓������ʂ�m�F�����獡��͏I���ł��B�N�������T�[�o�[���~����ɂ̓T�[�o�[���N�������R�}���h�v�����v�g��Ctrl-C�������܂��BWindows���ł͂܂�ɃT�[�o�[�̒�~���ł��Ȃ����Ƃ�����܂��B���̏ꍇ�̓^�X�N�}�l�[�W���[���N������ruby.exe�̃v���Z�X�������I�����Ă��������B
+ToDoアプリケーションの動作を一通り確認したら今回は終了です。起動したサーバーを停止するにはサーバーを起動したコマンドプロンプトでCtrl-Cを押します。Windows環境ではまれにサーバーの停止ができないことがあります。その場合はタスクマネージャーを起動してruby.exeのプロセスを強制終了してください。
 
-����͂���ToDo���X�g���������Ă����܂��B
+次回はこのToDoリストを改造していきます。
 
 
