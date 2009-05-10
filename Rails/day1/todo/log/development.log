@@ -1,0 +1,117 @@
+  [4;36;1mSQL (0.0ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.0ms)[0m   [0mselect sqlite_version(*)[0m
+  [4;36;1mSQL (218.0ms)[0m   [0;1mCREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL) [0m
+  [4;35;1mSQL (110.0ms)[0m   [0mCREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")[0m
+  [4;36;1mSQL (0.0ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.0ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateTodos (20090507171612)
+  [4;36;1mSQL (0.0ms)[0m   [0;1mCREATE TABLE "todos" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar(255), "due" date, "priority" integer, "created_at" datetime, "updated_at" datetime) [0m
+  [4;35;1mSQL (0.0ms)[0m   [0mINSERT INTO schema_migrations (version) VALUES ('20090507171612')[0m
+  [4;36;1mSQL (0.0ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.0ms)[0m   [0mSELECT version FROM schema_migrations[0m
+  [4;36;1mSQL (0.0ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.0ms)[0m   [0mPRAGMA index_list("todos")[0m
+  [4;36;1mSQL (0.0ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.0ms)[0m   [0mSELECT version FROM schema_migrations[0m
+  [4;36;1mSQL (0.0ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.0ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateTodos (20090507171612)
+  [4;36;1mSQL (0.0ms)[0m   [0;1mselect sqlite_version(*)[0m
+  [4;35;1mSQL (0.0ms)[0m   [0mDROP TABLE "todos"[0m
+  [4;36;1mSQL (0.0ms)[0m   [0;1mDELETE FROM schema_migrations WHERE version = '20090507171612'[0m
+  [4;35;1mSQL (0.0ms)[0m   [0m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;36;1mSQL (0.0ms)[0m   [0;1mSELECT version FROM schema_migrations[0m
+  [4;35;1mSQL (0.0ms)[0m   [0m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;36;1mSQL (0.0ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.0ms)[0m   [0mSELECT version FROM schema_migrations[0m
+Migrating to CreateTodos (20090507171612)
+  [4;36;1mSQL (0.0ms)[0m   [0;1mselect sqlite_version(*)[0m
+  [4;35;1mSQL (0.0ms)[0m   [0mCREATE TABLE "todos" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar(255), "due" date, "priority" integer, "created_at" datetime, "updated_at" datetime) [0m
+  [4;36;1mSQL (0.0ms)[0m   [0;1mINSERT INTO schema_migrations (version) VALUES ('20090507171612')[0m
+  [4;35;1mSQL (0.0ms)[0m   [0m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;36;1mSQL (0.0ms)[0m   [0;1mSELECT version FROM schema_migrations[0m
+  [4;35;1mSQL (0.0ms)[0m   [0m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;36;1mSQL (0.0ms)[0m   [0;1mPRAGMA index_list("todos")[0m
+
+
+Processing TodosController#index (for 127.0.0.1 at 2009-05-08 03:11:47) [GET]
+  [4;36;1mTodo Load (0.0ms)[0m   [0;1mSELECT * FROM "todos" [0m
+Rendering template within layouts/todos
+Rendering todos/index
+Completed in 1203ms (View: 1141, DB: 0) | 200 OK [http://localhost/todos]
+
+
+Processing TodosController#new (for 127.0.0.1 at 2009-05-08 03:13:59) [GET]
+Rendering template within layouts/todos
+Rendering todos/new
+Completed in 844ms (View: 829, DB: 0) | 200 OK [http://localhost/todos/new]
+
+
+Processing TodosController#create (for 127.0.0.1 at 2009-05-08 03:16:30) [POST]
+  Parameters: {"commit"=>"Create", "authenticity_token"=>"k6wpWjgFQNGJ6SbgXLJ9mm0sV8FEHZsBFlxbFScnLJc=", "todo"=>{"due(1i)"=>"2009", "due(2i)"=>"5", "due(3i)"=>"7", "title"=>"買い物に行く", "priority"=>"2"}}
+  [4;35;1mTodo Create (0.0ms)[0m   [0mINSERT INTO "todos" ("created_at", "title", "updated_at", "priority", "due") VALUES('2009-05-07 18:16:30', '買い物に行く', '2009-05-07 18:16:30', 2, '2009-05-07')[0m
+Redirected to http://localhost:3000/todos/1
+Completed in 297ms (DB: 0) | 302 Found [http://localhost/todos]
+
+
+Processing TodosController#show (for 127.0.0.1 at 2009-05-08 03:16:31) [GET]
+  Parameters: {"id"=>"1"}
+  [4;36;1mTodo Load (0.0ms)[0m   [0;1mSELECT * FROM "todos" WHERE ("todos"."id" = 1) [0m
+Rendering template within layouts/todos
+Rendering todos/show
+Completed in 47ms (View: 16, DB: 0) | 200 OK [http://localhost/todos/1]
+
+
+Processing TodosController#index (for 127.0.0.1 at 2009-05-08 03:17:48) [GET]
+  [4;35;1mTodo Load (16.0ms)[0m   [0mSELECT * FROM "todos" [0m
+Rendering template within layouts/todos
+Rendering todos/index
+Completed in 16ms (View: 0, DB: 16) | 200 OK [http://localhost/todos]
+
+
+Processing TodosController#destroy (for 127.0.0.1 at 2009-05-08 03:20:50) [DELETE]
+  Parameters: {"authenticity_token"=>"k6wpWjgFQNGJ6SbgXLJ9mm0sV8FEHZsBFlxbFScnLJc=", "id"=>"1"}
+  [4;36;1mTodo Load (16.0ms)[0m   [0;1mSELECT * FROM "todos" WHERE ("todos"."id" = 1) [0m
+  [4;35;1mTodo Destroy (0.0ms)[0m   [0mDELETE FROM "todos" WHERE "id" = 1[0m
+Redirected to http://localhost:3000/todos
+Completed in 125ms (DB: 16) | 302 Found [http://localhost/todos/1]
+
+
+Processing TodosController#index (for 127.0.0.1 at 2009-05-08 03:20:50) [GET]
+  [4;36;1mTodo Load (16.0ms)[0m   [0;1mSELECT * FROM "todos" [0m
+Rendering template within layouts/todos
+Rendering todos/index
+Completed in 47ms (View: 16, DB: 16) | 200 OK [http://localhost/todos]
