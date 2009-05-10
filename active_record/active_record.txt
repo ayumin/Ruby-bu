@@ -1,14 +1,14 @@
-Active Record�Ƃ�
+Active Recordとは
 
-�u�f�[�^�x�[�X�̃e�[�u����r���[�̗�����b�v���A�f�[�^�x�[�X�A�N�Z�X���J�v�Z�������A�h���C�����W�b�N��ǉ�����I�u�W�F�N�g�v
+「データベースのテーブルやビューの列をラップし、データベースアクセスをカプセル化し、ドメインロジックを追加するオブジェクト」
 
-Active Record�Ƃ́A�r�W�l�X�I�u�W�F�N�g�ƃf�[�^�x�[�X�e�[�u���Ƃ�ڑ����A���W�b�N�ƃf�[�^���ЂƂ܂Ƃ܂�Ƃ��ĕ\������i���I���h���C�����f���i�U�����ƃf�[�^���J�v�Z���������h���C���̃I�u�W�F�N�g���f���j�𐶐�����B����́AMartin Fowler�ɂ���ċL�q���ꂽ������O/R�}�b�s���O�p�^�[���̎����ł���B
+Active Recordとは、ビジネスオブジェクトとデータベーステーブルとを接続し、ロジックとデータをひとまとまりとして表現する永続的名ドメインモデル（振舞いとデータをカプセル化したドメインのオブジェクトモデル）を生成する。これは、Martin Fowlerによって記述された同名のO/Rマッピングパターンの実装である。
 
-�C���X�g�[��
+インストール
 gem install rails
-rails�̑���gem�Ɠ����ɃC���X�g�[������܂��B
+railsの他のgemと同時にインストールされます。
 
-�ł���{�I��ActiveRecord
+最も基本的なActiveRecord
 
 person.rb
 ----
@@ -16,44 +16,44 @@ require 'rubygems'
 require 'active_record'
 class Person < ActiveRecord::Base
 end
-���̂�����4�s�i������1�s�j�̃R�[�h�ɂ���āA�N���X�ƃe�[�u���̊֘A�t���������I�ɂ����Ȃ��܂��B
-ActiveRecord�ł̓N���X���̕����`�̖��O�����e�[�u���Ƃ̊֘A�t���������邽�߁A����Person�N���X��people�e�[�u���Ɗ֘A�t���������Ȃ��邱�ƂɂȂ�܂��B
+このたった4行（実質は1行）のコードによって、クラスとテーブルの関連付けが自動的におこなわれます。
+ActiveRecordではクラス名の複数形の名前を持つテーブルとの関連付けがつくられるため、このPersonクラスはpeopleテーブルと関連付けがおこなわれることになります。
 
 class User < ActiveRecord::Base; end
 
-��users�e�[�u���Ɗ֘A�t�����A
+はusersテーブルと関連付けられ、
 
 class Child < ActiveRecord::Base; end
 
-��children�e�[�u���Ɗ֘A�t������܂��B
+はchildrenテーブルと関連付けされます。
 
-�Ⴆ��people�e�[�u����name��age�Ƃ����J����������ꍇ�A�Ƃ��ɉ����L�q���Ȃ��Ă�Person#name��Person#age�Ƃ����A�N�Z�T���\�b�h�����݂��邱�ƂɂȂ�܂��B�i�������I�I�j�Ⴆ�΁A���L�̂悤�Ȃ��Ƃ��ł��܂��B
+例えばpeopleテーブルにnameやageというカラムがある場合、とくに何も記述しなくてもPerson#nameやPerson#ageというアクセサメソッドが存在することになります。（すごい！！）例えば、下記のようなことができます。
 
 main.rb
 ----
 require 'person'
 
-p = Person.new         # �V�������R�[�h������
-p.name = 'Aoyama Taro' # �����炵�����R�[�h�ɖ��O��ݒ�
-p.age = 32             # �N���ݒ�
-p.save                 # �����炵�����R�[�h���e�[�u���ɉi��������
+p = Person.new         # 新しいレコードをつくる
+p.name = 'Aoyama Taro' # あたらしいレコードに名前を設定
+p.age = 32             # 年齢を設定
+p.save                 # あたらしいレコードをテーブルに永続化する
 
-teenagers = Person.find(:all, :conditions=>[ "age<?", '20']) # 20�˖����̂ЂƂ���������
+teenagers = Person.find(:all, :conditions=>[ "age<?", '20']) # 20才未満のひとを検索する
 teenagers.each do |teen|
   p teen.name
 end
-yamamoto = Person.find_by_name 'Yamamoto Hanako' # �R�{����𖼑O�Ō�������
+yamamoto = Person.find_by_name 'Yamamoto Hanako' # 山本さんを名前で検索する
 
-���ɂ�ActiveRecord::Base�ɂ͓��I�ɐ������������ׂ����\�b�h���������񂠂�܂��B
-�ڂ����̓��t�@�����X���Q�Ƃ��Ă��������B
+他にもActiveRecord::Baseには動的に生成される驚くべきメソッドがたくさんあります。
+詳しくはリファレンスを参照してください。
 http://api.rubyonrails.org/classes/ActiveRecord/Base.html
 
-����g�p����DBMS�͈������ȒP��SQLite3�Ƃ��܂��BSQLite3��Dropbox����擾���Ă��������B
+今回使用するDBMSは扱いが簡単なSQLite3とします。SQLite3はDropboxから取得してください。
 \My Dropbox\Ruby-bu\Tools
 sqlite-3_6_4.zip
 
-�W�J����zip�̒��ɂ���sqlite3.dll��sqlite3.exe��C:\WINDOWS�ɃR�s�[���܂��B
-�܂�ruby��sqlite3���g�p���邽�߂ɃA�_�v�^���C���X�g�[������K�v������܂��B
+展開したzipの中にあるsqlite3.dllとsqlite3.exeをC:\WINDOWSにコピーします。
+またrubyでsqlite3を使用するためにアダプタをインストールする必要があります。
 
 > gem install sqlite3-ruby --version '=1.2.3'
 Successfully installed sqlite3-ruby-1.2.3-x86-mswin32
@@ -62,17 +62,17 @@ Installing ri documentation for sqlite3-ruby-1.2.3-x86-mswin32...
 Installing RDoc documentation for sqlite3-ruby-1.2.3-x86-mswin32...
 
 
-�����ł́A���L�̂悤�ȍ\�������e�[�u����ActiveRecord�ő��삵�Ă݂܂��B
+ここでは、下記のような構造を持つテーブルをActiveRecordで操作してみます。
 
 people.sql
 ----
 create table people (
-  id INTEGER PRIMARY KEY AUTOINCREMENT, -- ��L�[/�����C���N�������g�^
+  id INTEGER PRIMARY KEY AUTOINCREMENT, -- 主キー/自動インクリメント型
   name TEXT,
   celphone TEXT,
   age INTEGER);
 
-�܂����炩���߈ȉ��̃f�[�^��p�ӂ��Ă����܂��B
+またあらかじめ以下のデータを用意しておきます。
 
 people_data.sql
 ----
@@ -87,7 +87,7 @@ insert into people (name,celphone,age) values ('Ookubo Seitarou', '090-6185-4060
 insert into people (name,celphone,age) values ('Nomura Kisaku',   '080-6612-0744', 48 );
 insert into people (name,celphone,age) values ('Akita Nanako',    '090-0309-5654', 40 );
 
-��ƃt�H���_��sqlite3���N�����A�e�[�u���ƃf�[�^������܂��B
+作業フォルダでsqlite3を起動し、テーブルとデータをつくります。
 
 >sqlite3 sample.db
 SQLite version 3.6.4
